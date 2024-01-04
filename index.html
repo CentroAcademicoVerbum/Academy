@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Academy | Página Inicial</title>
+  <link rel="stylesheet" href="styless.css">
+  <style>
+    /* Adicionando estilo para o ícone do menu */
+    #menu-icon {
+      display: none;
+      cursor: pointer;
+    }
+
+    @media only screen and (max-width: 768px) {
+      /* Esconde a lista de navegação em telas menores */
+      nav ul {
+        display: none;
+      }
+
+      /* Exibe o ícone do menu em telas menores */
+      #menu-icon {
+        display: block;
+      }
+
+      /* Estilo para a lista não ordenada dentro do menu responsivo */
+      nav ul {
+        list-style: none;
+        padding: 10px;
+      }
+
+      /* Estilo para os itens da lista no menu responsivo */
+      nav ul li {
+        display: block;
+        margin-bottom: 10px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <ul id="nav-list">
+      <li>
+        <a href="Cursos.html" target="_blank">CURSOS</a>
+      </li>
+      <li>
+        <a href="Contato.html" target="_blank">CONTATO</a>
+      </li>
+      <li>
+        <a href="Login.html" target="_blank">PORTAL DO ALUNO</a>
+      </li>
+      <li>
+        <a href="Gerenecia.html" target="_blank">GERENCIA</a>
+      </li>
+    </ul>
+
+    <!-- Adicionando o ícone do menu -->
+    <div id="menu-icon">&#9776;</div>
+  </nav>
+
+  <script>
+    // Adicionando funcionalidade para exibir/ocultar o menu responsivo
+    document.getElementById("menu-icon").addEventListener("click", function () {
+      var navList = document.getElementById("nav-list");
+      navList.style.display = (navList.style.display === "block" ? "none" : "block");
+    });
+  </script>
+</body>
+
+</html>

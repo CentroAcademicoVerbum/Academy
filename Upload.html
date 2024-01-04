@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="teste.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo</title>
+    <script type="module">
+        
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.2.0/firebase-app.js';
+        import { getStorage, ref, uploadBytes, list, getDownloadURL } from 'https://www.gstatic.com/firebasejs/9.2.0/firebase-storage.js';
+
+        // Configurações do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyA1S745DONj16MEak4FQOjsvVTtscgkqrg",
+            authDomain: "academy-df621.firebaseapp.com",
+            projectId: "academy-df621",
+            storageBucket: "academy-df621.appspot.com",
+            messagingSenderId: "520007199757",
+            appId: "1:520007199757:web:5c6e93553eefba2b587944",
+            measurementId: "G-DXFED0D18K"
+        };
+
+        // Inicialize o Firebase
+        const app = initializeApp(firebaseConfig);
+        const storage = getStorage(app);
+
+        // Função para fazer o upload do vídeo
+        window.uploadVideo = function () {
+            // Obtenha os elementos de entrada
+            const fileInput = document.getElementById('videoInput');
+            const nameInput = document.getElementById('videoName');
+            const moduleInput = document.getElementById('videoModule');
+            const durationInput = document.getElementById('videoDuration');
+            const descriptionInput = document.getElementById('videoDescription');
+
+            const file = fileInput.files[0];
+
+            if (file) {
+                // Crie uma referência para o arquivo no Storage (use um nome de arquivo único)
+                const videoRef = ref(storage, 'videos/' + file.name);
+
+                // Faça o upload do arquivo
+                uploadBytes(videoRef, file).then(() => {
+                    console.log('Upload concluído');
+
+                    // Atualize o player para exibir o último vídeo adicionado
+                    updatePlayer();
+
+                    // Exiba a mensagem de confirmação
+                    showConfirmationMessage(file.name);
+
+                    // Salve as informações adicionais no armazenamento local
+                    saveVideoInfo(nameInput.value, moduleInput.value, durationInput.value, descriptionInput.value);
+                }).catch((error) => {
+                    console.error('Erro no upload:', error);
+                });
+            } else {
+                console.log('Selecione um vídeo para fazer upload.');
+            }
+        }
+
+        // Função para obter o último vídeo adicionado e atualizar o player
+        function updatePlayer() {
+            // Obtém uma lista de todos os itens no diretório 'videos'
+            list(ref(storage, 'videos')).then((result) => {
+                // O último item na lista será o último vídeo adicionado
+                const lastVideo = result.items[result.items.length - 1];
+
+                // Obtém o URL de download do último vídeo
+                getDownloadURL(lastVideo).then((downloadURL) => {
+                    // Obtendo o elemento de vídeo
+                    const videoPlayer = document.getElementById('videoPlayer');
+
+                    // Defina a origem do vídeo
+                    videoPlayer.src = downloadURL;
+
+                    // Inicie a reprodução automaticamente
+                    videoPlayer.play();
+
+                    // Armazene a URL do vídeo no armazenamento local
+                    localStorage.setItem('lastVideoURL', downloadURL);
+                }).catch((error) => {
+                    console.error('Erro ao obter o URL do vídeo:', error);
+                });
+            }).catch((error) => {
+                console.error('Erro ao obter a lista de vídeos:', error);
+            });
+        }
+
+        // Função para exibir mensagem de confirmação
+        function showConfirmationMessage(fileName) {
+            const confirmationMessage = document.getElementById('confirmationMessage');
+            const videoLink = document.getElementById('videoLink');
+
+            // Mostre a mensagem
+            confirmationMessage.style.display = 'block';
+
+            // Crie um link para o vídeo
+            const downloadURL = `https://storage.googleapis.com/${firebaseConfig.storageBucket}/videos/${fileName}`;
+            videoLink.innerHTML = `<a href="${downloadURL}" target="_blank">${downloadURL}</a>`;
+        }
+
+        // Função para salvar informações adicionais no armazenamento local
+        function saveVideoInfo(name, module, duration, description) {
+            const videoInfo = {
+                name: name,
+                module: module,
+                duration: duration,
+                description: description
+            };
+
+            // Converta o objeto em uma string JSON e armazene no armazenamento local
+            localStorage.setItem('lastVideoInfo', JSON.stringify(videoInfo));
+        }
+
+        // Função chamada ao carregar a página
+        window.onload = function () {
+            // Verifique se há uma URL de vídeo armazenada no armazenamento local
+            const lastVideoURL = localStorage.getItem('lastVideoURL');
+
+            if (lastVideoURL) {
+                // Se houver uma URL, configure o player para reproduzi-la
+                const videoPlayer = document.getElementById('videoPlayer');
+                videoPlayer.src = lastVideoURL;
+                videoPlayer.play();
+            }
+
+            // Verifique se há informações adicionais armazenadas no armazenamento local
+            const lastVideoInfo = localStorage.getItem('lastVideoInfo');
+
+            if (lastVideoInfo) {
+                // Se houver informações, exiba-as na página
+                const videoInfo = JSON.parse(lastVideoInfo);
+
+                const videoNameInput = document.getElementById('videoName');
+                const videoModuleInput = document.getElementById('videoModule');
+                const videoDurationInput = document.getElementById('videoDuration');
+                const videoDescriptionInput = document.getElementById('videoDescription');
+
+                videoNameInput.value = videoInfo.name;
+                videoModuleInput.value = videoInfo.module;
+                videoDurationInput.value = videoInfo.duration;
+                videoDescriptionInput.value = videoInfo.description;
+            }
+        }
+
+        // Função para salvar o vídeo na página
+        window.saveVideo = function () {
+            // Verifique se há informações de vídeo armazenadas no armazenamento local
+            const lastVideoInfo = localStorage.getItem('lastVideoInfo');
+
+            if (lastVideoInfo) {
+                // Adicione o código aqui para salvar as informações na página
+                const savedVideoContainer = document.getElementById('savedVideoContainer');
+
+                const videoInfo = JSON.parse(lastVideoInfo);
+
+                savedVideoContainer.innerHTML += `<div>
+                    <h3>${videoInfo.name}</h3>
+                    <p>Módulo: ${videoInfo.module}</p>
+                    <p>Duração: ${videoInfo.duration}</p>
+                    <p>Descrição: ${videoInfo.description}</p>
+                    <video controls width="640" height="360" src="${localStorage.getItem('lastVideoURL')}"></video>
+                </div>`;
+            } else {
+                console.log('Nenhuma informação disponível para salvar.');
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <!-- Formulário de upload -->
+    <form id="videoForm">
+        <label for="videoName">Nome do Vídeo:</label>
+        <input type="text" id="videoName" required>
+
+        <label for="videoModule">Quantidade de Módulos:</label>
+        <input type="number" id="videoModule" required>
+
+        <label for="videoDuration">Duração (minutos):</label>
+        <input type="number" id="videoDuration" required>
+
+        <label for="videoDescription">Descrição:</label>
+        <textarea id="videoDescription" rows="4" required></textarea>
+
+        <input type="file" id="videoInput" accept="video/*">
+        <button type="button" onclick="uploadVideo()">Fazer Upload do Vídeo</button>
+        <!-- Botão para salvar o vídeo na página -->
+        <button type="button" onclick="saveVideo()">Salvar Vídeo na Página</button>
+    </form>
+
+    <!-- Div para exibir mensagens de confirmação -->
+    <div id="confirmationMessage" style="display: none;">
+        Upload concluído! Seu vídeo está disponível em <span id="videoLink"></span>.
+    </div>
+
+    <!-- Player de vídeo -->
+    <video id="videoPlayer" controls width="640" height="360">
+        Seu navegador não suporta o elemento de vídeo.
+    </video>
+
+    <!-- Container para os vídeos salvos na página -->
+    <div id="savedVideoContainer"></div>
+
+</body>
+</html>

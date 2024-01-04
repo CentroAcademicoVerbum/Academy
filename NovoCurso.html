@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de Curso</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1a1a1a; /* Preto mais claro */
+            color: #fff; /* Texto em branco */
+            font-size: 14px; /* Tamanho padrão da fonte para o corpo do documento */
+            display: flex;
+            flex-direction: row;
+            height: 100vh;
+        }
+
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #333;
+            height: 100%; /* Altura para cobrir a altura total da tela */
+            display: flex;
+            flex-direction: column; /* Ajuste para a barra vertical */
+            align-items: center; /* Ajuste para a barra vertical */
+            position: fixed;
+            left: 0;
+            width: 100px; /* Largura para a barra vertical */
+        }
+
+        li {
+            display: block; /* Ajuste para a barra vertical */
+        }
+
+        li a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 8px 10px; /* Ajustado o padding */
+            text-decoration: none;
+        }
+
+        li a:hover {
+            background-color: #111;
+        }
+
+        .tabContent {
+            display: none;
+            width: 100%;
+           position: absolute;
+           left: 250px;
+            max-width: 400px; /* Largura máxima para o conteúdo centralizado */
+            margin-left: 100px; /* Ajustado o margin-left para deixar espaço para a barra de navegação */
+        }
+
+        .moduloForm {
+            margin-top: 10px; /* Ajustado o margin-top */
+            border: 1px solid #555; /* Borda mais escura */
+            padding: 8px; /* Ajustado o padding */
+            margin-bottom: 10px; /* Ajustado o margin-bottom */
+            background-color: #333; /* Fundo mais escuro */
+        }
+
+        .moduloContainer {
+            margin-top: 10px; /* Ajustado o margin-top */
+        }
+
+        h2, h3 {
+            color: #ffcc00; /* Amarelo neon */
+            font-size: 18px; /* Tamanho da fonte para os títulos */
+        }
+
+        label {
+            display: block;
+            margin-bottom: 4px; /* Ajustado o margin-bottom */
+            color: #ffcc00; /* Amarelo neon */
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        button,
+        input[type="file"] {
+            width: calc(100% - 16px); /* Ajustado o width e padding */
+            padding: 6px; /* Ajustado o padding */
+            margin-bottom: 6x; /* Ajustado o margin-bottom */
+            box-sizing: border-box;
+            font-size: 14px; /* Tamanho da fonte para os campos de entrada */
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            margin-bottom: 10px;
+            padding: 6px 10px; /* Ajustado o padding */
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px; /* Tamanho da fonte para os botões */
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Abas para gerenciar o curso -->
+<ul>
+    <li><a href="javascript:void(0);" onclick="mostrarConteudo('cadastrarCurso')">Cadastrar Curso</a></li>
+    
+</ul>
+
+<!-- Conteúdo das abas -->
+<div id="cadastrarCurso" class="tabContent">
+    <h2>Cadastrar Curso</h2>
+    <form>
+        <label for="nomeCurso">Nome do Curso:</label>
+        <input type="text" id="nomeCurso" required>
+
+        <label for="professor">Professor:</label>
+        <input type="text" id="professor" required>
+
+        <label for="categoria">Categoria:</label>
+        <input type="text" id="categoria" required>
+
+        <label for="cargaHoraria">Carga Horária:</label>
+        <input type="text" id="cargaHoraria" required>
+
+        <!-- Botão para avançar para a próxima etapa -->
+        <button type="button" onclick="mostrarConteudo('uploadImagem')">Avançar</button>
+    </form>
+</div>
+
+<div id="uploadImagem" class="tabContent" style="display: none;">
+    <form>
+        <label for="imagemCurso">Upload de Imagem para Capa:</label>
+        <input type="file" id="imagemCurso" accept="image/*" required>
+
+        <!-- Botão para avançar para a próxima etapa -->
+        <button type="button" onclick="mostrarConteudo('gerenciarModulos')">Avançar</button>
+    </form>
+</div>
+
+<div id="gerenciarModulos" class="tabContent" style="display: none;">
+    <h2>Gerenciar Módulos</h2>
+
+    <!-- Botão para cadastrar módulo -->
+    <button type="button" onclick="cadastrarModulo()">Cadastrar Módulo</button>
+
+    <!-- Conteúdo dos módulos -->
+    <div id="modulosContainer"></div>
+</div>
+
+<script>
+    function mostrarConteudo(tabName) {
+        var i;
+        var tabContent = document.getElementsByClassName("tabContent");
+        for (i = 0; i < tabContent.length; i++) {
+            tabContent[i].style.display = "none";
+        }
+        document.getElementById(tabName).style.display = "block";
+    }
+
+    function cadastrarModulo() {
+        var modulosContainer = document.getElementById('modulosContainer');
+
+        // Criar formulário para cadastrar módulo
+        var moduloForm = document.createElement('div');
+        moduloForm.classList.add('moduloForm');
+
+        moduloForm.innerHTML = `
+            <h3>Cadastrar Módulo</h3>
+            <form>
+                <label for="nomeModulo">Nome do Módulo:</label>
+                <input type="text" id="nomeModulo" required>
+
+                <label for="descricaoModulo">Descrição:</label>
+                <textarea id="descricaoModulo" rows="4" required></textarea>
+
+                <label for="quantidadeAulas">Quantidade de Aulas:</label>
+                <input type="number" id="quantidadeAulas" required>
+
+                <div id="videosContainer">
+                    <label for="videoModulo">Vídeo do Módulo:</label>
+                    <input type="file" id="videoModulo" accept="video/*" required>
+
+                    <button type="button" onclick="adicionarVideo()">Adicionar Vídeo</button>
+                </div>
+
+                <button type="button" onclick="removerModulo()">Remover Módulo</button>
+                <button type="button" onclick="salvarModulo()">Salvar Módulo</button>
+            </form>
+        `;
+
+        modulosContainer.appendChild(moduloForm);
+    }
+
+    function adicionarVideo() {
+        var videosContainer = document.getElementById('videosContainer');
+
+        // Criar campo para adicionar vídeo
+        var novoCampoVideo = document.createElement('div');
+        novoCampoVideo.innerHTML = `
+            <label for="videoModulo">Vídeo do Módulo:</label>
+            <input type="file" id="videoModulo" accept="video/*" required>
+        `;
+
+        videosContainer.appendChild(novoCampoVideo);
+    }
+
+    function removerModulo() {
+        var modulosContainer = document.getElementById('modulosContainer');
+        var moduloForms = modulosContainer.getElementsByClassName('moduloForm');
+
+        // Remova o último formulário de módulo
+        if (moduloForms.length > 0) {
+            modulosContainer.removeChild(moduloForms[moduloForms.length - 1]);
+        }
+    }
+
+    function salvarModulo() {
+        var modulosContainer = document.getElementById('modulosContainer');
+        var moduloForm = document.querySelector('.moduloForm');
+
+        // Adicione aqui a lógica para salvar os dados do módulo
+
+        // Exibir os dados do módulo abaixo do formulário
+        var moduloContainer = document.createElement('div');
+        moduloContainer.classList.add('moduloContainer');
+        moduloContainer.innerHTML = `
+            <h3>Módulo: ${document.getElementById('nomeModulo').value}</h3>
+            <p>Descrição: ${document.getElementById('descricaoModulo').value}</p>
+            <p>Quantidade de Aulas: ${document.getElementById('quantidadeAulas').value}</p>
+            <button type="button" onclick="cadastrarModulo()">Cadastrar Outro Módulo</button>
+        `;
+        modulosContainer.appendChild(moduloContainer);
+
+        // Limpar formulário após salvar
+        moduloForm.querySelector('form').reset();
+    }
+</script>
+
+</body>
+</html>

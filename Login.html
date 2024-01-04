@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login de Usuário</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+            background-color: #141414;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        form {
+            background-color: #2c2c2c;
+            color: #000; /* Cor do texto alterada para preto */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #fff; /* Cor do texto alterada para branco */
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #707070;
+            color: #fff; /* Cor do texto alterada para branco */
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        button:hover {
+            background-color: #1a1a1a;
+        }
+
+        .google-button {
+            background-color: #dc4e41;
+            color: #fff; /* Cor do texto alterada para branco */
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .google-button:hover {
+            background-color: #800101;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 8px;
+        }
+
+        .register-button {
+            background-color: #4caf50;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s ease-in-out;
+            margin-top: 16px;
+        }
+
+        .register-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+    <form id="loginForm">
+        <label for="email">E-mail:</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="senha">Senha:</label>
+        <input type="password" id="senha" name="senha" required>
+
+        <button type="submit">Login</button>
+
+        <button type="button" class="google-button" onclick="signInWithGoogle()">Login com Google</button>
+
+        <p class="error-message" style="display:none;">Senha ou Email Incorreto</p>
+
+        <!-- Botão para acessar a página de cadastro -->
+        <button type="button" class="register-button" onclick="window.location.href='Cadastro.html'">Cadastrar</button>
+    </form>
+
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-auth.js"></script>
+
+    <script>
+        // ... (seu script Firebase permanece inalterado)
+    </script>
+</body>
+</html>
+
+    <script>
+        // Configurações do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyA1S745DONj16MEak4FQOjsvVTtscgkqrg",
+            authDomain: "academy-df621.firebaseapp.com",
+            projectId: "academy-df621",
+            storageBucket: "academy-df621.appspot.com",
+            messagingSenderId: "520007199757",
+            appId: "1:520007199757:web:5c6e93553eefba2b587944",
+            measurementId: "G-DXFED0D18K"
+        };
+
+        // Inicialize o Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+
+        const errorMessageElement = document.querySelector('.error-message');
+
+        document.getElementById('loginForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const formData = new FormData(event.target);
+            const email = formData.get('email');
+            const senha = formData.get('senha');
+
+            // Efetua o login no Firebase Authentication
+            firebase.auth().signInWithEmailAndPassword(email, senha)
+                .then((userCredential) => {
+                    console.log('Usuário logado com sucesso!', userCredential.user);
+
+                    // Redireciona para a página 'video.html'
+                    window.location.href = 'video.html';
+                })
+                .catch((error) => {
+                    console.error('Erro ao efetuar login:', error);
+
+                    // Exibe a mensagem de erro com base no código de erro
+                    if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
+                        errorMessageElement.textContent = 'Senha ou Email Incorreto';
+                        errorMessageElement.style.display = 'block';
+                    } else {
+                        errorMessageElement.textContent = 'Senha ou Email Incorreto.';
+                        errorMessageElement.style.display = 'block';
+                    }
+                });
+        });
+
+        function signInWithGoogle() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            firebase.auth().signInWithPopup(provider)
+                .then((result) => {
+                    console.log('Usuário logado com sucesso usando o Google!', result.user);
+                    // Redireciona para a página 'video.html'
+                    window.location.href = 'video.html';
+                })
+                .catch((error) => {
+                    console.error('Erro ao efetuar login com o Google:', error);
+                    // Adicione tratamento de erro, se necessário
+                });
+        }
+    </script>
+
+</body>
+</html>

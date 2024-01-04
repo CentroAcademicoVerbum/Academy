@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" type="text/css" href="video.css">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Player</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+</head>
+
+<body>
+    <div id="videoListContainer">
+        <ul id="videoList">
+            <!-- A lista de vídeos será exibida aqui -->
+        </ul>
+    </div>
+
+    <div id="videoTitle">
+        <!-- O nome do vídeo será exibido aqui -->
+    </div>
+
+    <nav>
+        <ul>
+        </ul>
+    </nav>
+
+    <video id="videoPlayer" controls width="640" height="360" autoplay>
+        <!-- O vídeo será carregado aqui -->
+    </video>
+
+    <div>
+        <button onclick="playPrevious()">Anterior</button>
+        <button onclick="playNext()">Próximo</button>
+    </div>
+
+    <header>
+        <div class="logo">
+            <img src="./Imagens/Design sem nome (1).png" alt="">
+        </div>
+    </header>
+
+    <script>
+        // Configurações do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyA1S745DONj16MEak4FQOjsvVTtscgkqrg",
+            authDomain: "academy-df621.firebaseapp.com",
+            projectId: "academy-df621",
+            storageBucket: "academy-df621.appspot.com",
+            messagingSenderId: "520007199757",
+            appId: "1:520007199757:web:5c6e93553eefba2b587944",
+            measurementId: "G-DXFED0D18K"
+        };
+
+        // Inicialize o Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const storage = firebase.storage(app);
+        let currentVideoIndex = 0;
+        let videoList = [];
+        let videoPlayer = document.getElementById('videoPlayer');
+        let videoListContainer = document.getElementById('videoList');
+
+        // Carregue a lista de vídeos inicial
+        loadVideoList();
+
+        // Função para carregar o vídeo atual
+        function loadCurrentVideo() {
+            if (videoList.length > 0) {
+                const videosRef = storage.ref(videoList[currentVideoIndex]);
+
+                // Obtenha o nome do vídeo da última parte do caminho do Firebase Storage
+                const videoNameWithExtension = videoList[currentVideoIndex].split('/').pop();
+
+                // Remova a extensão do nome do vídeo
+                const videoName = videoNameWithExtension.split('.').slice(0, -1).join('.');
+
+                // Atualize a div com o nome do vídeo
+                document.getElementById('videoTitle').innerText = videoName;
+
+                videosRef.getDownloadURL().then((url) => {
+                    videoPlayer.src = url;
+
+                    // Pausar o vídeo assim que ele for carregado
+                    videoPlayer.pause();
+
+                    // Verifique se há uma posição salva e defina-a
+                    const savedPosition = localStorage.getItem('videoPosition');
+                    if (savedPosition !== null) {
+                        videoPlayer.currentTime = parseFloat(savedPosition);
+                    }
+                }).catch((error) => {
+                    console.error('Erro ao obter a URL do vídeo:', error);
+                });
+            } else {
+                console.error('Nenhum vídeo disponível na lista.');
+            }
+        }
+
+        // Função para reproduzir o vídeo anterior
+        function playPrevious() {
+            if (currentVideoIndex > 0) {
+                currentVideoIndex--;
+                saveAndLoadVideo();
+            }
+        }
+
+        // Função para reproduzir o próximo vídeo
+        function playNext() {
+            if (currentVideoIndex < videoList.length - 1) {
+                currentVideoIndex++;
+                saveAndLoadVideo();
+            }
+        }
+
+        // Função para salvar a posição do vídeo e carregar o vídeo
+        function saveAndLoadVideo() {
+            // Salve a posição atual do vídeo no localStorage
+            localStorage.setItem('videoPosition', videoPlayer.currentTime);
+
+            // Salve o índice atual do vídeo no localStorage
+            localStorage.setItem('currentVideoIndex', currentVideoIndex);
+
+            // Carregue o próximo vídeo
+            loadCurrentVideo();
+        }
+
+        // Função para carregar a lista de vídeos disponíveis
+        function loadVideoList() {
+            // Obtenha a lista de objetos no diretório 'videos' no Firebase Storage
+            const videosDirectoryRef = storage.ref('videos');
+
+            videosDirectoryRef.listAll().then((result) => {
+                // Após carregar a lista, atualize a variável videoList
+                videoList = result.items.map(item => item.fullPath);
+
+                // Recupere o índice atual do vídeo do localStorage
+                const savedIndex = localStorage.getItem('currentVideoIndex');
+                if (savedIndex !== null) {
+                    currentVideoIndex = parseInt(savedIndex);
+                }
+
+                // Carregue automaticamente o vídeo atual
+                loadCurrentVideo();
+
+                // Preencha a lista de vídeos no lado esquerdo
+                videoList.forEach((video, index) => {
+                    const videoNameWithExtension = video.split('/').pop();
+                    const videoName = videoNameWithExtension.split('.').slice(0, -1).join('.');
+
+                    const listItem = document.createElement('li');
+                    listItem.innerHTML = `<a href="#" onclick="loadVideo(${index})">${videoName}</a>`;
+                    videoListContainer.appendChild(listItem);
+                });
+            }).catch((error) => {
+                console.error('Erro ao obter a lista de vídeos:', error);
+            });
+        }
+
+        // Função para carregar um vídeo específico quando um item da lista é clicado
+        function loadVideo(index) {
+            currentVideoIndex = index;
+            saveAndLoadVideo();
+        }
+    </script>
+</body>
+
+</html>
+<div id="tituloAulas">AULAS</div>
+
+    <!-- Conteúdo da lista aqui -->
+</div>
+
+<div id="materialComplementar">MATERIAL</div>
+<button id="btnDownload">DOWNLOAD</button>
+

@@ -1,0 +1,92 @@
+/* Reset de estilos para remover margens e paddings padrão do navegador */
+body, h1, h2, h3, p, ul, li {
+  margin: 0;
+  padding: 0;
+}
+
+/* Estilo para o corpo da página */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #222; /* Fundo preto mais claro */
+  color: white; /* Letras brancas */
+  text-align: center; /* Centralizar o texto na página */
+}
+
+/* Estilo para a navegação */
+nav {
+  background-color: #001f3f; /* Barra azul escuro */
+  color: white;
+  padding: 10px;
+}
+
+/* Estilo para a lista não ordenada dentro da navegação */
+nav ul {
+  list-style: none;
+}
+
+/* Estilo para os itens da lista na navegação */
+nav ul li {
+  display: inline;
+  margin-right: 20px;
+}
+
+/* Estilo para os links na navegação */
+nav ul li a {
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+}
+
+/* ... (código CSS existente) */
+
+/* Estilo para o ícone do menu */
+#menu-icon {
+  display: none;
+  cursor: pointer;
+  float: right; /* Posiciona o ícone no canto direito */
+  margin-right: 20px; /* Adiciona um espaçamento à direita para separar do conteúdo */
+  font-size: 24px; /* Ajusta o tamanho do ícone */
+  transition: color 0.3s; /* Adiciona uma transição suave para a cor do ícone */
+}
+
+/* Estilo para os links na navegação quando hover, incluindo o ícone do menu */
+nav ul li a:hover,
+#menu-icon:hover {
+  color: #ffd700; /* Amarelo escuro - você pode escolher outra cor */
+}
+
+/* ... (código CSS existente) */
+
+@media only screen and (max-width: 768px) {
+  /* ... (código CSS existente) */
+
+  /* Ajusta o layout do menu responsivo para exibir na lateral */
+  nav {
+    flex-direction: row;
+    justify-content: flex-end; /* Alinha os itens no final (direita) */
+  }
+
+  #menu-icon {
+    display: flex;
+    left: 80px;
+    float:none; /* Remove o float */
+    margin-right: 20px; /* Adiciona um espaçamento à direita */
+    font-size: 24px; /* Ajusta o tamanho do ícone */
+  }
+
+  /* Estilo para a lista não ordenada dentro do menu responsivo */
+  nav ul {
+    list-style: none;
+    padding: 10px;
+    width: auto; /* Volta para a largura automática para o layout de linha */
+  }
+
+  /* Estilo para os itens da lista no menu responsivo */
+  nav ul li {
+    display: block;
+    margin-bottom: 10px;
+    width: auto; /* Volta para a largura automática para o layout de linha */
+  }
+
+  /* ... (código CSS existente) */
+}

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Leads</title>
+</head>
+<body>
+    <ul id="listaLeads"></ul>
+
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-storage.js"></script>
+
+    <script>
+        // Configurações do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyA1S745DONj16MEak4FQOjsvVTtscgkqrg",
+            authDomain: "academy-df621.firebaseapp.com",
+            projectId: "academy-df621",
+            storageBucket: "academy-df621.appspot.com",
+            messagingSenderId: "520007199757",
+            appId: "1:520007199757:web:5c6e93553eefba2b587944",
+            measurementId: "G-DXFED0D18K"
+        };
+
+        // Inicialize o Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const storage = firebase.storage(); // Remova a referência ao app aqui
+
+        // Referência para a coleção 'usuarios' no Firestore
+        const usuariosCollection = firebase.firestore().collection('usuarios');
+
+        // Obter leads do Firestore e exibir no console
+        usuariosCollection.get().then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                const leadData = doc.data();
+                console.log("Nome: ", leadData.nome);
+                console.log("Telefone: ", leadData.telefone);
+                console.log("E-mail: ", leadData.email);
+
+                // Exemplo de utilização do Storage
+                const userId = doc.id;
+                const storageRef = storage.ref(`usuarios/${userId}/perfil.jpg`);
+                // Faça o que for necessário com o storageRef, como download de imagem
+
+                console.log("---");
+            });
+        }).catch((error) => {
+            console.error("Erro ao obter leads:", error);
+        });
+    </script>
+</body>
+</html>

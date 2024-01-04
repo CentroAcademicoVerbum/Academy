@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Usuário</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+            background-color: #141414;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        form {
+            background-color: #2c2c2c;
+            color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+    <form id="cadastroForm">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" required>
+
+        <label for="telefone">Telefone:</label>
+        <input type="tel" id="telefone" name="telefone" required>
+
+        <label for="email">E-mail:</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="senha">Senha:</label>
+        <input type="password" id="senha" name="senha" required>
+
+        <label for="repetirSenha">Repetir Senha:</label>
+        <input type="password" id="repetirSenha" name="repetirSenha" required>
+
+        <button type="submit">Cadastrar</button>
+    </form>
+
+    <!-- Importações de módulos Firebase (mantidas como no seu código) -->
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-storage.js"></script>
+
+    <script>
+        // Configurações do Firebase (mantidas como no seu código)
+        const firebaseConfig = {
+            apiKey: "AIzaSyA1S745DONj16MEak4FQOjsvVTtscgkqrg",
+            authDomain: "academy-df621.firebaseapp.com",
+            projectId: "academy-df621",
+            storageBucket: "academy-df621.appspot.com",
+            messagingSenderId: "520007199757",
+            appId: "1:520007199757:web:5c6e93553eefba2b587944",
+            measurementId: "G-DXFED0D18K"
+        };
+
+        // Inicialize o Firebase (mantida como no seu código)
+        const app = firebase.initializeApp(firebaseConfig);
+        const storage = firebase.storage(app);
+
+        // Event listener do formulário (mantido como no seu código)
+        document.getElementById('cadastroForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const formData = new FormData(event.target);
+            const nome = formData.get('nome');
+            const telefone = formData.get('telefone');
+            const email = formData.get('email');
+            const senha = formData.get('senha');
+            const repetirSenha = formData.get('repetirSenha');
+
+            // Verificar se as senhas coincidem
+            if (senha !== repetirSenha) {
+                alert("As senhas não coincidem. Por favor, verifique e tente novamente.");
+                return;
+            }
+
+            // Lógica do Firebase (atualizada com um bloco catch mais detalhado)
+            firebase.auth().createUserWithEmailAndPassword(email, senha)
+                .then((userCredential) => {
+                    const userId = userCredential.user.uid;
+
+                    const userDoc = firebase.firestore().collection('usuarios').doc(userId);
+
+                    userDoc.set({
+                        nome: nome,
+                        telefone: telefone,
+                        email: email
+                    })
+                    .then(() => {
+                        console.log('Usuário cadastrado com sucesso!');
+                    })
+                    .catch((error) => {
+                        console.error('Erro ao criar usuário no Firestore:', error);
+                    });
+                })
+                .catch((error) => {
+                    console.error('Erro ao criar usuário no Firebase Authentication:', error.code, error.message);
+                });
+        });
+    </script>
+
+</body>
+</html>
